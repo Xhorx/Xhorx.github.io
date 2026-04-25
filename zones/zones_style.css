@@ -1,0 +1,80 @@
+:root {
+  --text: #111111;
+  --muted: #333333;
+  --accent: #111111;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Consolas, sans-serif;
+  color: var(--text);
+  line-height: 1.75;
+
+  background-image: 
+    linear-gradient(rgba(245, 245, 245, 0.85), rgba(245, 245, 245, 0.85)),
+    url("images/background.svg"); /* change path if needed */
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 85vmax auto;   /* smaller background */
+  background-color: #f5f5f5;
+}
+
+.zones-logo {
+  display: block;
+  width: 220px;   /* adjust as you want */
+  height: auto;
+  margin: 0 auto 20px auto;  /* centered with space below */
+}
+
+.container {
+  max-width: 900px;
+  margin: 56px auto;
+  padding: 40px 28px;
+  background: rgba(235, 235, 235, 0.7);
+  border-radius: 20px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.15);
+}
+
+.zones-title {
+  font-family: Consolas, "Courier New", monospace;
+  color: #000000;
+}
+
+.zones-subtitle {
+  text-align: center;
+  font-size: 20px;
+  color: #222222;
+}
+
+p, li {
+  color: #111111;
+}
+
+.section h2 {
+  font-family: Consolas, "Courier New", monospace;
+  color: #000000;
+}
+
+a {
+  color: #000000;
+}
+
+.back-link,
+.button-link {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 14px;
+
+  background-color: #cccccc50;
+  border: none;
+  border-radius: 10px;
+  
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  color: #000000;
+  font-family: Consolas, sans-serif;
+  text-decoration: none;
+}

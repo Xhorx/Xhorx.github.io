@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yiheng Shen</title>
+  <script>
+    if (localStorage.getItem("theme") === "dark") {
+      document.documentElement.classList.add("dark-mode");
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="images/flavicon_xs.png">
+</head>
+
+<body>
+  <div class="page-layout">
+
+    <nav class="sidebar">
+      <h2 class="sidebar-name">Contents</h2>
+
+      <a href="index.html" class="active">Home</a>
+      <a href="publications.html">Publications</a>
+      <a href="services.html">Services</a>
+      <a href="misc.html">Misc & Fun</a>
+
+      <hr>
+
+      <a href="cv.pdf" target="_blank" rel="noopener noreferrer">CV</a>
+      <a href="https://scholar.google.com/citations?user=jf9FIX4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Google Scholar</a> 
+      <br>
+      <button id="dark-mode-toggle" class="dark-mode-button" type="button">
+        Dark mode
+      </button>
+    </nav>
+
+    <main class="container">
+      <img
+        class="profile-photo profile-photo-light"
+        src="images/photo.jpg"
+        alt="Yiheng Shen"
+      >
+
+      <img
+        class="profile-photo profile-photo-dark"
+        src="images/dark_photo.png"
+        alt="Yiheng Shen"
+      >
+      <h1>Yiheng Shen 沈毅恒</h1>
+      <h2>Ph.D. Candidate, Duke University</h2>
+
+      <p>
+        I am currently a fifth-year Ph.D. student at
+        <a href="https://cs.duke.edu/" target="_blank" rel="noopener noreferrer">Duke University</a>.
+        I am very fortunate to be advised by
+        <a href="https://www.kameshmunagala.org/" target="_blank" rel="noopener noreferrer">Prof. Kamesh Munagala</a>.
+        My research interests lie in the interface of economics and computation,
+        especially fairness and stability in resource allocation problems.
+      </p>
+      <p>
+        I was a student researcher at
+        <a href="https://research.google/" target="_blank" rel="noopener noreferrer">Google Research</a>,
+        hosted by
+        <a href="https://aschild.github.io/" target="_blank" rel="noopener noreferrer">Aaron Schild</a>
+        in the Summer of 2023. I interned at 
+        <a href="https://www.meta.com/facebook-app/" target="_blank" rel="noopener noreferrer">Meta</a>
+         in the Summer of 2025, supervised by
+        <a href="https://www.linkedin.com/in/wenshun-liu-6498342a/" target="_blank" rel="noopener noreferrer">Wenshun Liu</a>.
+        Prior to joining Duke, I received my bachelor's degree at
+        <a href="https://iiis.tsinghua.edu.cn/en/" target="_blank" rel="noopener noreferrer">Institute for Interdisciplinary Information Sciences</a>
+        <a href="https://iiis.tsinghua.edu.cn/en/Yao_Class/About_Yao_Class.htm" target="_blank" rel="noopener noreferrer">(Yao Class)</a>,
+        Tsinghua University.
+      </p>
+      <p>
+        Email: <a href="mailto:ys341@duke.edu">ys341@duke.edu</a>  
+        <button class="copy-email-btn" onclick="copyEmail(this)">[Copy]</button><br>
+      </p>
+      <!-- <p>
+        Office address: <br>
+        Room D341, <a href="https://maps.duke.edu/?focus=95" target="_blank" rel="noopener noreferrer">Levine Science Research Center</a>, <br>
+        308 Research Drive, Durham NC 27708
+      </p> -->
+      <!-- <p>
+        <a href="zones/zones_main.html" class="zones-button">ZONES</a>
+      </p> -->
+  </div>
+  
+  <script src="script.js"></script>
+  <script>
+    function copyEmail(button) {
+      const email = "ys341@duke.edu";
+
+      navigator.clipboard.writeText(email).then(() => {
+        button.textContent = "Copied!";
+
+        setTimeout(() => {
+          button.textContent = "[Copy]";
+        }, 1500);
+      }).catch(() => {
+        button.textContent = "Failed";
+
+        setTimeout(() => {
+          button.textContent = "[Copy]";
+        }, 1500);
+      });
+    }
+  </script>
+</body>
+</html>
