@@ -48,6 +48,23 @@ h1 {
   color: #555;
 }
 
+.copy-fcode-btn {
+  margin-left: 0px;
+  padding: 3px 8px;
+  border: none;
+  border-radius: 6px;
+  background: rgb(230, 230, 230);
+  color: #666;
+  cursor: pointer;
+  font-size: 18px;
+  font-family: Consolas;
+}
+
+.copy-fcode-btn:hover {
+  background: rgb(220, 220, 220);;
+}
+
+
 .game-list {
   list-style: none;
   padding-left: 0;
@@ -120,7 +137,7 @@ h1 {
   display: inline-block;
   padding: 5px 10px;
 
-  background-color: #dedede;
+  background-color: #dededea0;
   border-radius: 10px;
 
   font-size: 15px !important;

@@ -15,7 +15,7 @@
     <h1>Games?</h1>
 
     <p class="intro">
-      Here is a ranked list of games that I personally recommend. I will update it as more games are played.
+      Here is a ranked list of games that I personally recommend. I will update it as more games are played. <br>
     </p>
 
     <ol class="game-list">
@@ -425,6 +425,27 @@
         </div>
       </li>
     </ol>
+    <p class="intro">
+      <button class="copy-fcode-btn" onclick="copyFcode(this)">Copy</button> my Steam friend code.
+    </p>
   </main>
+  <script>
+    function copyFcode(button) {
+      const fcode = "869826192";
+      navigator.clipboard.writeText(fcode).then(() => {
+        button.textContent = "Copied";
+
+        setTimeout(() => {
+          button.textContent = "Copy";
+        }, 1500);
+      }).catch(() => {
+        button.textContent = "Failed";
+
+        setTimeout(() => {
+          button.textContent = "Copy";
+        }, 1500);
+      });
+    }
+  </script>
 </body>
 </html>

@@ -1,0 +1,393 @@
+    /*
+      Global color variables.
+      Changing these values is the easiest way to adjust the theme.
+    */
+    :root {
+      --bg: #f5f2ea;
+      --panel: rgba(255, 255, 255, 0.92);
+      --text: #171717;
+      --muted: #606060;
+      --line: #d6d0c4;
+      --hot: #ffb020;
+      --ventrix: #2e8b57;
+      --gemsdig: #F36161;
+      --empty: #fbfaf6;
+      --shadow: #292929;
+    }
+
+    /* Make width/height calculations easier for all elements. */
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Overall page background and default font. */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(76, 120, 255, 0.12), transparent 28rem),
+        radial-gradient(circle at bottom right, rgba(197, 76, 255, 0.13), transparent 30rem),
+        var(--bg);
+    }
+
+    /* Main page layout: board area on the left, side panel on the right. */
+    .page {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 32px auto;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    /* Top header with the ZONES title and rule-summary pills. */
+    header {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 42px;
+      letter-spacing: 0.08em;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 8px 11px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Large white panels that hold the game UI. */
+    .main-panel,
+    /* Right-side panel containing score, cards, and log. */
+    .side-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: 0 18px 48px rgba(24, 24, 24, 0.08);
+    }
+
+    /* Four small status cards above the board. */
+    .status-bar {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .status-card {
+      border: 1px solid var(--line);
+      background: #fffaf0;
+      border-radius: 16px;
+      padding: 12px;
+      min-height: 74px;
+    }
+
+    .status-card strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 7px;
+    }
+
+    .status-card span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    /* Board container. The actual cells are created by JavaScript. */
+    .board-wrap {
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.54);
+      border-radius: 18px;
+      border: 1px dashed var(--line);
+    }
+
+    /* 7×7 CSS grid. If BOARD_SIZE changes in JS, update this too. */
+    .board {
+      display: grid;
+      grid-template-columns: repeat(7, 62px);
+      grid-template-rows: repeat(7, 62px);
+      gap: 6px;
+      user-select: none;
+    }
+
+    /* A single board square. Owner/hot/selected classes are added by JavaScript. */
+    .cell {
+      position: relative;
+      border: 1px solid var(--line);
+      background: var(--empty);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.08s ease;
+      overflow: hidden;
+    }
+
+    .cell:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+      border-color: #9c9588;
+    }
+
+    /* Occupied cells: the colored inner square shows who owns the tile. */
+    .cell.ventrix::before,
+    .cell.gemsdig::before {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border-radius: 11px;
+    }
+
+    .cell.ventrix::before {
+      background: var(--ventrix);
+    }
+
+    .cell.gemsdig::before {
+      background: var(--gemsdig);
+    }
+
+    /* Hot-zone marker: a gold star drawn on top of the cell. */
+    .cell.hot::after {
+      content: "★";
+      position: absolute;
+      right: 5px;
+      top: 2px;
+      font-size: 17px;
+      color: var(--hot);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+      z-index: 3;
+    }
+
+    .cell.selected {
+      outline: 4px solid rgba(255, 176, 32, 0.85);
+      outline-offset: -4px;
+    }
+
+    .cell.match-preview {
+      box-shadow: inset 0 0 0 4px rgba(31, 163, 77, 0.45);
+    }
+
+    /* Button/control sections below the board. */
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .action-box {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .action-box h3,
+    .side-section h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    /* General button styling. */
+    button {
+      appearance: none;
+      border: 1px solid #c9c0b0;
+      background: #111;
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.08s ease, opacity 0.08s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .secondary {
+      background: #fff;
+      color: #111;
+    }
+
+    .danger {
+      background: #722;
+    }
+
+    .active-action {
+      border-color: #111;
+      box-shadow: inset 0 0 0 2px #111;
+    }
+
+    .help {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      margin: 9px 0 0;
+    }
+
+    .side-panel {
+      display: grid;
+      gap: 16px;
+    }
+
+    .side-section {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .score-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .player-score {
+      display: grid;
+      grid-template-columns: 18px 1fr auto;
+      gap: 9px;
+      align-items: center;
+      border-radius: 14px;
+      background: #faf8f2;
+      padding: 10px;
+      border: 1px solid var(--line);
+    }
+
+    .swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+    }
+
+    .swatch.ventrix { background: var(--ventrix); }
+    .swatch.gemsdig { background: var(--gemsdig); }
+
+    .score-small {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    /* Public ZONE card display. */
+    .zone-card {
+      background: #fbfaf6;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+
+    .zone-card.shadowed {
+      background: linear-gradient(135deg, #1f1f1f, #4b4b4b);
+      color: #fff;
+      border-color: #3a3a3a;
+    }
+
+    .zone-card h4 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .zone-card p {
+      margin: 7px 0 0;
+      font-size: 13px;
+      line-height: 1.45;
+      color: inherit;
+      opacity: 0.85;
+    }
+
+    .redeemed-list {
+      min-height: 22px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    /* Scrollable game log. */
+    .log {
+      max-height: 230px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 4px;
+    }
+
+    .log-entry {
+      font-size: 13px;
+      line-height: 1.35;
+      color: #333;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee5d6;
+    }
+
+    .game-over {
+      border: 2px solid #111;
+      background: #fff7d6;
+    }
+
+    /* Responsive layout: stack panels on narrower screens. */
+    @media (max-width: 980px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .pill-row {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .board {
+        grid-template-columns: repeat(7, 11.5vw);
+        grid-template-rows: repeat(7, 11.5vw);
+        gap: 4px;
+      }
+
+      .status-bar,
+      .controls {
+        grid-template-columns: 1fr;
+      }
+    }
