@@ -4,7 +4,7 @@
     */
     :root {
       --bg: #f5f2ea;
-      --panel: rgba(255, 255, 255, 0.92);
+      --panel: rgba(255, 255, 255, 0.8);
       --text: #171717;
       --muted: #606060;
       --line: #d6d0c4;
@@ -26,10 +26,13 @@
       min-height: 100vh;
       font-family: Arial, sans-serif;
       color: var(--text);
-      background:
+      background-image: 
+        linear-gradient(rgba(245, 245, 245, 0.85), rgba(245, 245, 245, 0.85)),
+        url("images/background.svg"); /* change path if needed */
+      /* background:
         radial-gradient(circle at top left, rgba(76, 120, 255, 0.12), transparent 28rem),
         radial-gradient(circle at bottom right, rgba(197, 76, 255, 0.13), transparent 30rem),
-        var(--bg);
+        var(--bg); */
     }
 
     /* Main page layout: board area on the left, side panel on the right. */
