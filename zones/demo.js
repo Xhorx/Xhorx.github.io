@@ -116,6 +116,7 @@
       confirmTiltBtn: document.getElementById("confirmTiltBtn"),
       redeemNormalBtn: document.getElementById("redeemNormalBtn"),
       redeemShadowBtn: document.getElementById("redeemShadowBtn"),
+      redeemChoiceList: document.getElementById("redeemChoiceList"),
       endTurnBtn: document.getElementById("endTurnBtn"),
       restartBtn: document.getElementById("restartBtn"),
       scoreGrid: document.getElementById("scoreGrid"),
@@ -172,7 +173,7 @@
       round = 1;
       turnOrder = [0, 1];
       turnIndex = 0;
-      currentAction = null;
+      currentAction = "occupy";
       selectedCells = new Set();
       previewCells = new Set();
       actionDone = false;
@@ -233,7 +234,11 @@
       if (gameOver || actionDone) return;
       currentAction = action;
       selectedCells.clear();
+
+      // If the player starts choosing an action, remove any old redeem-choice UI.
+      els.redeemChoiceList.innerHTML = "";
       previewCells.clear();
+
       render();
     }
 
@@ -264,14 +269,14 @@
 
     // Apply the Occupy action to the selected empty cells.
     function confirmOccupy() {
-      if (gameOver || actionDone || currentAction !== "occupy" || selectedCells.size < 1) return;
+      if (gameOver || actionDone || currentAction !== "occupy") return;
       const player = currentPlayer();
       for (const key of selectedCells) {
         const [r, c] = parseKey(key);
         board[r][c] = player.id;
       }
       player.lastPower = selectedCells.size;
-      addLog(`${player.name} occupied ${selectedCells.size} tile${selectedCells.size > 1 ? "s" : ""}. Power spent: ${player.lastPower}.`);
+      addLog(`${player.name} occupied ${selectedCells.size} tile${selectedCells.size === 1 ? "" : "s"}. Power spent: ${player.lastPower}.`);
       finishAction();
     }
 
@@ -303,14 +308,22 @@
     function endTurn() {
       if (gameOver || !actionDone) return;
       turnIndex += 1;
-      currentAction = null;
+      currentAction = "occupy";
       selectedCells.clear();
+
+      // Clear any unfinished ZONE-card choice UI from the previous player.
+      els.redeemChoiceList.innerHTML = "";
+
       previewCells.clear();
       actionDone = false;
       redeemDone = false;
 
       if (turnIndex >= turnOrder.length) {
         finishRound();
+      }
+
+      if (gameOver) {
+        currentAction = null;
       }
 
       render();
@@ -384,35 +397,54 @@
       return result;
     }
 
-    // Search the board for a matching shape for the given player.
-    function findMatch(card, playerId) {
+    // Search the board for a matching shapes for the given player.
+    function findMatches(card, playerId) {
       if (card.baseId && !players[playerId].redeemed.includes(card.baseId)) {
-        return null;
+        return [];
       }
 
       const enemyId = enemyOf(playerId);
+      const matches = [];
+      const seenMatches = new Set();
+
       for (const orientation of orientationsFor(card)) {
         const maxR = Math.max(...orientation.map(cell => cell.r));
         const maxC = Math.max(...orientation.map(cell => cell.c));
+
         for (let anchorR = 0; anchorR <= BOARD_SIZE - 1 - maxR; anchorR++) {
           for (let anchorC = 0; anchorC <= BOARD_SIZE - 1 - maxC; anchorC++) {
             let ok = true;
             const matched = [];
+
             for (const cell of orientation) {
               const r = anchorR + cell.r;
               const c = anchorC + cell.c;
               const expectedOwner = cell.type === "own" ? playerId : enemyId;
+
               if (board[r][c] !== expectedOwner) {
                 ok = false;
                 break;
               }
+
               matched.push({ r, c });
             }
-            if (ok) return matched;
+
+            if (ok) {
+              const signature = matched
+                .map(cell => `${cell.r},${cell.c}`)
+                .sort()
+                .join("|");
+
+              if (!seenMatches.has(signature)) {
+                seenMatches.add(signature);
+                matches.push(matched);
+              }
+            }
           }
         }
       }
-      return null;
+
+      return matches;
     }
 
     // The public card is the first remaining card in that pile.
@@ -427,41 +459,154 @@
 
     // Try to redeem one normal or shadowed ZONE card.
     // redeemDone enforces the rule: at most one redemption per turn.
-    function redeem(kind) {
-      if (gameOver || redeemDone) return;
-      const player = currentPlayer();
-      const card = activeCard(kind);
-      if (!card) {
-        addLog(`There are no ${kind} ZONE cards left in the public pile.`);
-        render();
-        return;
-      }
-      const matched = findMatch(card, player.id);
 
-      if (!matched) {
-        previewCells.clear();
-        const missingBase = card.baseId && !player.redeemed.includes(card.baseId);
-        addLog(`${player.name} cannot redeem ${card.title}${missingBase ? ` because they have not redeemed ${card.baseId.toUpperCase()} yet` : " because no matching shape exists"}.`);
-        render();
-        return;
-      }
+    function previewMatchedShape(matched) {
+      previewCells = new Set(matched.map(cell => keyOf(cell.r, cell.c)));
 
+      // We only need to redraw the board, not the whole page.
+      // This keeps the choice buttons from being rebuilt.
+      renderBoard();
+    }
+
+    function showRedeemConfirm(kind, card, player, matched) {
+      // Highlight the shape that will be redeemed.
+      previewCells = new Set(matched.map(cell => keyOf(cell.r, cell.c)));
+
+      els.redeemChoiceList.innerHTML = `
+        <p class="help">${card.title} shape found. Confirm to redeem this card:</p>
+      `;
+
+      const confirmButton = document.createElement("button");
+      confirmButton.className = "redeem-confirm-btn";
+      confirmButton.textContent = `Confirm Redeem ${card.title}`;
+
+      confirmButton.addEventListener("click", () => {
+        completeRedeem(kind, card, player, matched);
+      });
+
+      els.redeemChoiceList.appendChild(confirmButton);
+
+      render();
+    }
+
+    function completeRedeem(kind, card, player, matched) {
       player.zoneScore += card.points;
       player.redeemed.push(card.id);
       redeemDone = true;
-      previewCells = new Set(matched.map(cell => keyOf(cell.r, cell.c)));
-
       if (card.removeOnRedeem) {
         for (const cell of matched) {
           board[cell.r][cell.c] = null;
         }
+
         addLog(`${player.name} redeemed ${card.title} for +${card.points} pts and removed ${matched.length} tile${matched.length > 1 ? "s" : ""}.`);
       } else {
         addLog(`${player.name} redeemed ${card.title} for +${card.points} pts.`);
       }
 
       removeActiveCard(kind);
+      // After redemption, clear the choice UI and remove the preview highlight.
+      els.redeemChoiceList.innerHTML = "";
+      previewCells.clear();
       render();
+    }
+
+    function showRemovalChoices(kind, card, player, matches) {
+      els.redeemChoiceList.innerHTML = `
+        <p class="help">Multiple ${card.title} shapes found. Preview a shape, then confirm which one to remove:</p>
+      `;
+
+      matches.forEach((matched, index) => {
+        const row = document.createElement("div");
+        row.className = "redeem-choice-row";
+
+        const previewButton = document.createElement("button");
+        previewButton.className = "redeem-choice-btn";
+        previewButton.textContent = `Shape ${index + 1}: ${matched.map(cell => `(${cell.r},${cell.c})`).join(" ")}`;
+
+        const confirmButton = document.createElement("button");
+        confirmButton.className = "redeem-confirm-btn";
+        confirmButton.textContent = "Confirm";
+
+        function previewThisShape() {
+          document.querySelectorAll(".redeem-choice-row").forEach(choiceRow => {
+            choiceRow.classList.remove("is-previewing");
+          });
+
+          row.classList.add("is-previewing");
+          previewMatchedShape(matched);
+        }
+
+        // Hovering or clicking the shape button previews that shape.
+        previewButton.addEventListener("mouseenter", previewThisShape);
+        previewButton.addEventListener("click", previewThisShape);
+        previewButton.addEventListener("focus", previewThisShape);
+
+        // Hovering the confirm button also previews the shape it will confirm.
+        confirmButton.addEventListener("mouseenter", previewThisShape);
+        confirmButton.addEventListener("focus", previewThisShape);
+
+        // Only this button actually redeems/removes the shape.
+        confirmButton.addEventListener("click", () => {
+          completeRedeem(kind, card, player, matched);
+        });
+
+        row.appendChild(previewButton);
+        row.appendChild(confirmButton);
+        els.redeemChoiceList.appendChild(row);
+      });
+
+      // Preview the first option by default.
+      const firstRow = els.redeemChoiceList.querySelector(".redeem-choice-row");
+      if (firstRow) firstRow.classList.add("is-previewing");
+      previewMatchedShape(matches[0]);
+
+      addLog(`${player.name} found ${matches.length} possible ${card.title} shapes. Choose one to remove.`);
+      renderLog();
+    }
+
+    function redeem(kind) {
+      if (gameOver || redeemDone) return;
+
+      const player = currentPlayer();
+      const card = activeCard(kind);
+
+      if (!card) {
+        addLog(`There are no ${kind} ZONE cards left in the public pile.`);
+        render();
+        return;
+      }
+
+      const matches = findMatches(card, player.id);
+
+      if (matches.length === 0) {
+        previewCells.clear();
+
+        const missingBase = card.baseId && !player.redeemed.includes(card.baseId);
+
+        addLog(`${player.name} cannot redeem ${card.title}${missingBase ? ` because they have not redeemed ${card.baseId.toUpperCase()} yet` : " because no matching shape exists"}.`);
+
+        els.redeemChoiceList.innerHTML = "";
+        render();
+        return;
+      }
+
+      // If this card does NOT remove tiles, the exact shape does not matter.
+      // But we still ask the player to confirm the redemption.
+      if (!card.removeOnRedeem) {
+        showRedeemConfirm(kind, card, player, matches[0]);
+        return;
+      }
+
+      // If this is a removal card and only one matching shape exists,
+      // no shape choice is needed, but we still ask for confirmation.
+      if (matches.length === 1) {
+        showRedeemConfirm(kind, card, player, matches[0]);
+        return;
+      }
+
+      // If this is a removal card and multiple matching shapes exist,
+      // the player must choose which shape to remove.
+      showRemovalChoices(kind, card, player, matches);
     }
 
     /************************************************************
@@ -524,7 +669,7 @@
           ? "ZONE card redeemed this turn. Complete/end your action."
           : actionDone
             ? "Action completed. You may redeem one card, then end turn."
-            : "Choose one action. You may also redeem one card before acting.";
+            : "Occupy is selected by default. Click empty cells, or choose Tilt instead.";
 
       if (!currentAction) {
         els.actionLabel.textContent = actionDone ? "Action completed" : "No action selected";
@@ -546,9 +691,13 @@
     // Enable/disable buttons depending on what the player is allowed to do now.
     function renderButtons() {
       const canAct = !gameOver && !actionDone;
-      els.occupyBtn.disabled = !canAct;
-      els.tiltBtn.disabled = !canAct;
-      els.confirmOccupyBtn.disabled = !(canAct && currentAction === "occupy" && selectedCells.size >= 1);
+
+      // Disable the button for the action that is already selected.
+      // The other action button is still clickable, so the player can switch actions.
+      els.occupyBtn.disabled = !canAct || currentAction === "occupy";
+      els.tiltBtn.disabled = !canAct || currentAction === "tilt";
+
+      els.confirmOccupyBtn.disabled = !(canAct && currentAction === "occupy");
       els.confirmTiltBtn.disabled = !(canAct && currentAction === "tilt");
       els.clearSelectBtn.disabled = !(canAct && selectedCells.size > 0);
       els.endTurnBtn.disabled = gameOver || !actionDone;

@@ -14,13 +14,14 @@
     <!-- Header: title and small rule-summary pills. -->
     <header>
       <div>
-        <h1>ZONES</h1>
+        <img src="images/title.svg" alt="ZONES" class="zones-logo">
         <p class="subtitle">Static two-player rules demo · 7×7 board · Ventrix vs Gemsdig</p>
       </div>
       <div class="pill-row">
-        <div class="pill">15 rounds</div>
-        <div class="pill">Hot zones every 5 rounds</div>
-        <div class="pill">Rotations allowed · no mirrors</div>
+        <div class="pill">Ending rule: 15 rounds</div>
+        <div class="pill">Hot-zone rule: Hot zones generated every 5 rounds</div>
+        <div class="pill">Base Action mod: No reservations allowed</div>
+        <!-- <div class="pill">Rotations allowed · no mirrors</div> -->
       </div>
     </header>
 
@@ -81,6 +82,7 @@
             <button id="redeemNormalBtn" class="secondary">Redeem Normal</button>
             <button id="redeemShadowBtn" class="secondary">Redeem Shadowed</button>
           </div>
+          <div id="redeemChoiceList" class="redeem-choice-list"></div>
         </div>
 
         <div class="action-box">
