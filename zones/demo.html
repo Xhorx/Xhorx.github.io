@@ -26,68 +26,49 @@
     </header>
 
     <!-- Main panel: status cards, board, and player controls. -->
-    <main class="main-panel">
-      <!-- Status bar: these values are updated by JavaScript during the game. -->
-      <section class="status-bar">
-        <div class="status-card">
-          <strong id="roundLabel">Round 1 / 15</strong>
-          <span id="turnOrderLabel">Order: Ventrix → Gemsdig</span>
-        </div>
-        <div class="status-card">
-          <strong id="activePlayerLabel">Ventrix turn</strong>
-          <span id="activeHint">Choose one action, then end turn.</span>
-        </div>
-        <div class="status-card">
-          <strong id="actionLabel">No action selected</strong>
-          <span id="selectionLabel">Select Occupy or Tilt.</span>
-        </div>
-        <div class="status-card">
-          <strong>Current hot zones</strong>
-          <span id="hotZoneLabel">3 tiles marked ★</span>
-        </div>
-      </section>
-
-      <!-- Board area: JavaScript fills this empty div with 7×7 clickable cells. -->
+    <!-- Column 1: board and actions -->
+    <main class="main-panel board-panel">
+      <!-- Board area -->
       <section class="board-wrap">
         <div id="board" class="board" aria-label="ZONES board"></div>
       </section>
 
-      <!-- Action controls: buttons for choosing and confirming player actions. -->
-      <section class="controls">
+      <!-- Actions: redeem is visually first, but Occupy can still be selected by default in JS -->
+      <section class="controls action-grid">
+        <div class="action-box" id="redeemBox">
+          <h3>Redeem ZONE card</h3>
+          <p class="help">
+            Click Redeem, then choose one public ZONE card from the ZONE card pool.
+          </p>
+          <div class="button-row">
+            <button id="redeemCardBtn" class="secondary">Redeem ZONE Card</button>
+          </div>
+        </div>
+
         <div class="action-box" id="occupyBox">
           <h3>Action 1: Occupy</h3>
-          <p class="help">Click up to 3 empty cells. Power spent equals the number of occupied tiles.</p>
+          <p class="help">Click 0 to 3 empty cells. Power spent equals the number of occupied tiles.</p>
           <div class="button-row">
             <button id="occupyBtn">Choose Occupy</button>
             <button id="confirmOccupyBtn" class="secondary" disabled>Confirm Occupy</button>
-            <button id="clearSelectBtn" class="secondary" disabled>Clear</button>
+            <!-- <button id="clearSelectBtn" class="secondary" disabled>Clear</button> -->
           </div>
         </div>
 
         <div class="action-box" id="tiltBox">
           <h3>Action 2: Tilt</h3>
-          <p class="help">Click at most 1 enemy tile and convert it to your faction. Power spent: 2.</p>
+          <p class="help">Click at most 1 tile from each enemy and convert it to your faction. Power spent: 2.</p>
           <div class="button-row">
             <button id="tiltBtn">Choose Tilt</button>
             <button id="confirmTiltBtn" class="secondary" disabled>Confirm Tilt</button>
           </div>
         </div>
-      </section>
-
-      <section class="controls">
-        <div class="action-box">
-          <h3>Redeem public ZONE cards</h3>
-          <p class="help">During your turn, you may redeem before or after your action if the board matches the public shape.</p>
-          <div class="button-row">
-            <button id="redeemNormalBtn" class="secondary">Redeem Normal</button>
-            <button id="redeemShadowBtn" class="secondary">Redeem Shadowed</button>
-          </div>
-          <div id="redeemChoiceList" class="redeem-choice-list"></div>
-        </div>
 
         <div class="action-box">
           <h3>Turn control</h3>
-          <p class="help">You must complete exactly one action each turn. Ties in power keep the previous relative order.</p>
+          <p class="help">
+            You must complete exactly one action each turn. Ties in power keep the previous relative order.
+          </p>
           <div class="button-row">
             <button id="endTurnBtn" disabled>End Turn</button>
             <button id="restartBtn" class="danger">Restart</button>
@@ -96,21 +77,47 @@
       </section>
     </main>
 
-    <!-- Side panel: scores, public cards, redeemed cards, and the game log. -->
-    <aside class="side-panel">
+    <!-- Column 2: ZONE cards and redeem-location UI -->
+    <aside class="side-panel cards-panel">
+      <section class="side-section">
+        <h3>Public normal ZONE cards</h3>
+        <div id="normalCard" class="zone-card-list"></div>
+      </section>
+
+      <section class="side-section">
+        <h3>Public shadowed ZONE cards</h3>
+        <div id="shadowCard" class="zone-card-list"></div>
+      </section>
+
+    </aside>
+
+    <!-- Column 3: game status -->
+    <aside class="side-panel status-panel">
+      <section class="status-bar">
+        <div class="status-card">
+          <strong id="roundLabel">Round 1 / 15</strong>
+          <span id="turnOrderLabel">Order: Ventrix → Gemsdig</span>
+        </div>
+
+        <div class="status-card">
+          <strong id="activePlayerLabel">Ventrix turn</strong>
+          <span id="activeHint">Choose one action, then end turn.</span>
+        </div>
+
+        <div class="status-card">
+          <strong id="actionLabel">No action selected</strong>
+          <span id="selectionLabel">Select Occupy or Tilt.</span>
+        </div>
+
+        <div class="status-card">
+          <strong>Current hot zones</strong>
+          <span id="hotZoneLabel">3 tiles marked ★</span>
+        </div>
+      </section>
+
       <section class="side-section" id="finalPanel">
         <h3>Score</h3>
         <div id="scoreGrid" class="score-grid"></div>
-      </section>
-
-      <section class="side-section">
-        <h3>Public normal ZONE</h3>
-        <div id="normalCard" class="zone-card"></div>
-      </section>
-
-      <section class="side-section">
-        <h3>Public shadowed ZONE</h3>
-        <div id="shadowCard" class="zone-card shadowed"></div>
       </section>
 
       <section class="side-section">

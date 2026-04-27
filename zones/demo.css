@@ -1,443 +1,571 @@
-    /*
-      Global color variables.
-      Changing these values is the easiest way to adjust the theme.
-    */
-    :root {
-      --bg: #f5f2ea;
-      --panel: rgba(255, 255, 255, 0.8);
-      --text: #171717;
-      --muted: #606060;
-      --line: #d6d0c4;
-      --hot: #ffb020;
-      --ventrix: #2e8b57;
-      --gemsdig: #F36161;
-      --empty: #fbfaf6;
-      --shadow: #292929;
-    }
+/*
+  Global color variables.
+  Changing these values is the easiest way to adjust the theme.
+*/
+:root {
+  --bg: #f5f2ea;
+  --panel: rgba(255, 255, 255, 0.8);
+  --text: #171717;
+  --muted: #606060;
+  --line: #d6d0c4;
+  --hot: #ffb020;
+  --ventrix: #2e8b57;
+  --gemsdig: #F36161;
+  --empty: #fbfaf6;
+  --shadow: #292929;
+}
 
-    /* Make width/height calculations easier for all elements. */
-    * {
-      box-sizing: border-box;
-    }
+/* Make width/height calculations easier for all elements. */
+* {
+  box-sizing: border-box;
+}
 
-    /* Overall page background and default font. */
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      color: var(--text);
-      background-image: 
-        linear-gradient(rgba(245, 245, 245, 0.85), rgba(245, 245, 245, 0.85)),
-        url("images/background.svg"); /* change path if needed */
-      /* background:
-        radial-gradient(circle at top left, rgba(76, 120, 255, 0.12), transparent 28rem),
-        radial-gradient(circle at bottom right, rgba(197, 76, 255, 0.13), transparent 30rem),
-        var(--bg); */
-    }
+/* Overall page background and default font. */
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  color: var(--text);
+  background-image: 
+    linear-gradient(rgba(245, 245, 245, 0.85), rgba(245, 245, 245, 0.85)),
+    url("images/background.svg"); /* change path if needed */
+  /* background:
+    radial-gradient(circle at top left, rgba(76, 120, 255, 0.12), transparent 28rem),
+    radial-gradient(circle at bottom right, rgba(197, 76, 255, 0.13), transparent 30rem),
+    var(--bg); */
+}
 
-    /* Main page layout: board area on the left, side panel on the right. */
-    .page {
-      width: min(1180px, calc(100vw - 32px));
-      margin: 32px auto;
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 22px;
-      align-items: start;
-    }
+/* Main page layout: board area on the left, side panel on the right. */
+.page {
+  width: min(1500px, calc(100vw - 32px));
+  margin: 32px auto;
+  display: grid;
+  grid-template-columns: minmax(650px, 1fr) minmax(340px, 430px) minmax(300px, 360px);
+  gap: 22px;
+  align-items: start;
+}
 
+.board-panel {
+  display: grid;
+  gap: 18px;
+}
 
-    .zones-logo {
-      display: block;
-      width: 200px;   /* adjust as you want */
-    }
+.cards-panel,
+.status-panel {
+  align-content: start;
+}
 
-    /* Top header with the ZONES title and rule-summary pills. */
-    header {
-      grid-column: 1 / -1;
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: end;
-    }
+.status-panel .status-bar {
+  grid-template-columns: 1fr;
+  margin-bottom: 0;
+}
 
-    h1 {
-      margin: 0;
-      font-size: 42px;
-      letter-spacing: 0.08em;
-    }
+.action-grid {
+  grid-template-columns: 1fr 1fr;
+}
 
-    .subtitle {
-      margin: 6px 0 0;
-      color: var(--muted);
-    }
+.cards-panel .zone-card-list {
+  display: grid;
+  gap: 12px;
+}
 
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: flex-end;
-    }
+.redeem-panel {
+  position: sticky;
+  top: 16px;
+}
 
-    .pill {
-      border: 1px solid var(--line);
-      background: var(--panel);
-      padding: 8px 11px;
-      border-radius: 999px;
-      font-size: 13px;
-      color: var(--muted);
-    }
+.zones-logo {
+  display: block;
+  width: 200px;   /* adjust as you want */
+}
 
-    /* Large white panels that hold the game UI. */
-    .main-panel,
-    /* Right-side panel containing score, cards, and log. */
-    .side-panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 20px;
-      box-shadow: 0 18px 48px rgba(24, 24, 24, 0.08);
-    }
+/* Top header with the ZONES title and rule-summary pills. */
+header {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: end;
+}
 
-    /* Four small status cards above the board. */
-    .status-bar {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 18px;
-    }
+h1 {
+  margin: 0;
+  font-size: 42px;
+  letter-spacing: 0.08em;
+}
 
-    .status-card {
-      border: 1px solid var(--line);
-      background: #fffaf0;
-      border-radius: 16px;
-      padding: 12px;
-      min-height: 74px;
-    }
+.subtitle {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
 
-    .status-card strong {
-      display: block;
-      font-size: 14px;
-      margin-bottom: 7px;
-    }
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
 
-    .status-card span {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.35;
-    }
+.pill {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 8px 11px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--muted);
+}
 
-    /* Board container. The actual cells are created by JavaScript. */
-    .board-wrap {
-      display: grid;
-      place-items: center;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.54);
-      border-radius: 18px;
-      border: 1px dashed var(--line);
-    }
+/* Large white panels that hold the game UI. */
+.main-panel,
+/* Right-side panel containing score, cards, and log. */
+.side-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 20px;
+  box-shadow: 0 18px 48px rgba(24, 24, 24, 0.08);
+}
 
-    /* 7×7 CSS grid. If BOARD_SIZE changes in JS, update this too. */
-    .board {
-      display: grid;
-      grid-template-columns: repeat(7, 62px);
-      grid-template-rows: repeat(7, 62px);
-      gap: 6px;
-      user-select: none;
-    }
+/* Four small status cards above the board. */
+.status-bar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
 
-    /* A single board square. Owner/hot/selected classes are added by JavaScript. */
-    .cell {
-      position: relative;
-      border: 1px solid var(--line);
-      background: var(--empty);
-      border-radius: 14px;
-      cursor: pointer;
-      transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.08s ease;
-      overflow: hidden;
-    }
+.status-card {
+  border: 1px solid var(--line);
+  background: #fffaf0;
+  border-radius: 16px;
+  padding: 12px;
+  min-height: 74px;
+}
 
-    .cell:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-      border-color: #9c9588;
-    }
+.status-card strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 7px;
+}
 
-    /* Occupied cells: the colored inner square shows who owns the tile. */
-    .cell.ventrix::before,
-    .cell.gemsdig::before {
-      content: "";
-      position: absolute;
-      inset: 9px;
-      border-radius: 11px;
-    }
+.status-card span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
 
-    .cell.ventrix::before {
-      background: var(--ventrix);
-    }
+/* Board container. The actual cells are created by JavaScript. */
+.board-wrap {
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.54);
+  border-radius: 18px;
+  border: 1px dashed var(--line);
+}
 
-    .cell.gemsdig::before {
-      background: var(--gemsdig);
-    }
+/* 7×7 CSS grid. If BOARD_SIZE changes in JS, update this too. */
+.board {
+  display: grid;
+  grid-template-columns: repeat(7, 62px);
+  grid-template-rows: repeat(7, 62px);
+  gap: 6px;
+  user-select: none;
+}
 
-    /* Hot-zone marker: a gold star drawn on top of the cell. */
-    .cell.hot::after {
-      content: "★";
-      position: absolute;
-      right: 5px;
-      top: 2px;
-      font-size: 17px;
-      color: var(--hot);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
-      z-index: 3;
-    }
+/* A single board square. Owner/hot/selected classes are added by JavaScript. */
+.cell {
+  position: relative;
+  border: 1px solid var(--line);
+  background: var(--empty);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.08s ease;
+  overflow: hidden;
+}
 
-    .cell.selected {
-      outline: 4px solid rgba(255, 176, 32, 0.85);
-      outline-offset: -4px;
-    }
+.cell:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  border-color: #9c9588;
+}
 
-    .cell.match-preview {
-      box-shadow: inset 0 0 0 4px rgba(31, 163, 77, 0.45);
-    }
+/* Occupied cells: the colored inner square shows who owns the tile. */
+.cell.ventrix::before,
+.cell.gemsdig::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 11px;
+}
 
-    /* Button/control sections below the board. */
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 18px;
-    }
+.cell.ventrix::before {
+  background: var(--ventrix);
+}
 
-    .action-box {
-      border: 1px solid var(--line);
-      background: #fff;
-      border-radius: 18px;
-      padding: 14px;
-    }
+.cell.gemsdig::before {
+  background: var(--gemsdig);
+}
 
-    .action-box h3,
-    .side-section h3 {
-      margin: 0 0 10px;
-      font-size: 16px;
-    }
+/* Hot-zone marker: a gold star drawn on top of the cell. */
+.cell.hot::after {
+  content: "★";
+  position: absolute;
+  right: 5px;
+  top: 2px;
+  font-size: 17px;
+  color: var(--hot);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  z-index: 3;
+}
 
-    /* General button styling. */
-    button {
-      appearance: none;
-      border: 1px solid #c9c0b0;
-      background: #111;
-      color: #fff;
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.08s ease, opacity 0.08s ease;
-    }
+.cell.selected {
+  outline: 4px solid rgba(255, 176, 32, 0.85);
+  outline-offset: -4px;
+}
 
-    button:hover:not(:disabled) {
-      transform: translateY(-1px);
-    }
+.cell.match-preview {
+  box-shadow: inset 0 0 0 4px rgba(31, 163, 77, 0.45);
+}
 
-    button:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
+/* Button/control sections below the board. */
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
 
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
+.action-box {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 18px;
+  padding: 14px;
+}
 
-    .secondary {
-      background: #fff;
-      color: #111;
-    }
+.action-box h3,
+.side-section h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
 
-    .danger {
-      background: #722;
-    }
+/* General button styling. */
+button {
+  appearance: none;
+  border: 1px solid #c9c0b0;
+  background: #111;
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.08s ease, opacity 0.08s ease;
+}
 
-    .active-action {
-      border-color: #111;
-      box-shadow: inset 0 0 0 2px #111;
-    }
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
 
-    .help {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-      margin: 9px 0 0;
-    }
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
 
-    .side-panel {
-      display: grid;
-      gap: 16px;
-    }
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
 
-    .side-section {
-      border: 1px solid var(--line);
-      background: #fff;
-      border-radius: 18px;
-      padding: 14px;
-    }
+.secondary {
+  background: #fff;
+  color: #111;
+}
 
-    .score-grid {
-      display: grid;
-      gap: 10px;
-    }
+.danger {
+  background: #722;
+}
 
-    .player-score {
-      display: grid;
-      grid-template-columns: 18px 1fr auto;
-      gap: 9px;
-      align-items: center;
-      border-radius: 14px;
-      background: #faf8f2;
-      padding: 10px;
-      border: 1px solid var(--line);
-    }
+.active-action {
+  border-color: #111;
+  box-shadow: inset 0 0 0 2px #111;
+}
 
-    .swatch {
-      width: 18px;
-      height: 18px;
-      border-radius: 6px;
-    }
+.help {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 9px 0 0;
+}
 
-    .swatch.ventrix { background: var(--ventrix); }
-    .swatch.gemsdig { background: var(--gemsdig); }
+.side-panel {
+  display: grid;
+  gap: 16px;
+}
 
-    .score-small {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 3px;
-    }
+.side-section {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 18px;
+  padding: 14px;
+}
 
-    /* Public ZONE card display. */
-    .zone-card {
-      background: #fbfaf6;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 12px;
-      margin-top: 8px;
-    }
+.score-grid {
+  display: grid;
+  gap: 10px;
+}
 
-    .zone-card.shadowed {
-      background: linear-gradient(135deg, #1f1f1f, #4b4b4b);
-      color: #fff;
-      border-color: #3a3a3a;
-    }
+.player-score {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  gap: 9px;
+  align-items: center;
+  border-radius: 14px;
+  background: #faf8f2;
+  padding: 10px;
+  border: 1px solid var(--line);
+}
 
-    .zone-card h4 {
-      margin: 0;
-      font-size: 16px;
-    }
+.swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+}
 
-    .zone-card p {
-      margin: 7px 0 0;
-      font-size: 13px;
-      line-height: 1.45;
-      color: inherit;
-      opacity: 0.85;
-    }
+.swatch.ventrix { background: var(--ventrix); }
+.swatch.gemsdig { background: var(--gemsdig); }
 
-    .redeemed-list {
-      min-height: 22px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-    }
+.score-small {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 3px;
+}
 
-    .redeem-choice-list {
-      margin-top: 10px;
-      display: grid;
-      gap: 8px;
-    }
+/* Public ZONE card display. */
+.zone-card {
+  background: #fbfaf6;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px;
+  margin-top: 8px;
+}
 
-    .redeem-choice-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      align-items: center;
-    }
+.zone-card.shadowed {
+  background: linear-gradient(135deg, #1f1f1f, #4b4b4b);
+  color: #fff;
+  border-color: #3a3a3a;
+}
 
-    .redeem-preview-btn {
-      background: #fff7d6;
-      color: #111;
-      border: 1px solid #d6b54a;
-      text-align: left;
-    }
+.zone-card-list {
+  display: grid;
+  gap: 10px;
+}
 
-    .redeem-confirm-btn {
-      background: #111;
-      color: #fff;
-    }
+.zone-card-list .zone-card {
+  margin-top: 0;
+}
 
-    .redeem-choice-btn {
-      background: #fff7d6;
-      color: #111;
-      border: 1px solid #d6b54a;
-      text-align: left;
-    }
+.zone-card.card-clickable {
+  cursor: pointer;
+}
 
-    .redeem-confirm-btn {
-      background: #111;
-      color: #fff;
-    }
+.zone-card.card-clickable:hover {
+  transform: translateY(-1px);
+}
 
-    .redeem-choice-row.is-previewing .redeem-preview-btn {
-      box-shadow: inset 0 0 0 2px #111;
-    }
+.zone-card.redeemable-card {
+  border-color: #2e8b57;
+  box-shadow: inset 0 0 0 2px rgba(46, 139, 87, 0.45);
+}
 
-    /* Scrollable game log. */
-    .log {
-      max-height: 230px;
-      overflow: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding-right: 4px;
-    }
+.zone-card.unredeemable-card {
+  opacity: 0.38;
+  filter: grayscale(0.8);
+  cursor: not-allowed;
+}
 
-    .log-entry {
-      font-size: 13px;
-      line-height: 1.35;
-      color: #333;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #eee5d6;
-    }
+.zone-card.pick-mode {
+  transition: transform 0.08s ease, opacity 0.08s ease, box-shadow 0.08s ease;
+}
 
-    .game-over {
-      border: 2px solid #111;
-      background: #fff7d6;
-    }
+.zone-card h4 {
+  margin: 0;
+  font-size: 16px;
+}
 
-    /* Responsive layout: stack panels on narrower screens. */
-    @media (max-width: 980px) {
-      .page {
-        grid-template-columns: 1fr;
-      }
+.zone-card p {
+  margin: 7px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: inherit;
+  opacity: 0.85;
+}
 
-      header {
-        align-items: start;
-        flex-direction: column;
-      }
+.zone-card.selected-redeem-card {
+  border-color: #111;
+  box-shadow:
+    inset 0 0 0 3px rgba(0, 0, 0, 0.85),
+    0 8px 18px rgba(0, 0, 0, 0.14);
+}
 
-      .pill-row {
-        justify-content: flex-start;
-      }
-    }
+.inline-redeem-panel {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
 
-    @media (max-width: 560px) {
-      .board {
-        grid-template-columns: repeat(7, 11.5vw);
-        grid-template-rows: repeat(7, 11.5vw);
-        gap: 4px;
-      }
+.zone-card.shadowed .inline-redeem-panel {
+  border-top-color: rgba(255, 255, 255, 0.25);
+}
 
-      .status-bar,
-      .controls {
-        grid-template-columns: 1fr;
-      }
-    }
+.zone-card.shadowed .redeem-location-row {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+
+.redeemed-list {
+  min-height: 22px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.redeem-choice-list {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.redeem-choice-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.redeem-preview-btn {
+  background: #fff7d6;
+  color: #111;
+  border: 1px solid #d6b54a;
+  text-align: left;
+}
+
+.redeem-confirm-btn {
+  background: #111;
+  color: #fff;
+}
+
+.redeem-choice-btn {
+  background: #fff7d6;
+  color: #111;
+  border: 1px solid #d6b54a;
+  text-align: left;
+}
+
+.redeem-confirm-btn {
+  background: #111;
+  color: #fff;
+}
+
+.redeem-choice-row.is-previewing .redeem-preview-btn {
+  box-shadow: inset 0 0 0 2px #111;
+}
+
+.redeem-location-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.redeem-location-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: start;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fffaf0;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.redeem-location-row:hover,
+.redeem-location-row.is-previewing {
+  border-color: #111;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.12);
+}
+
+.redeem-location-row input {
+  margin-top: 2px;
+}
+
+.redeem-confirm-btn {
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* Scrollable game log. */
+.log {
+  max-height: 230px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.log-entry {
+  font-size: 13px;
+  line-height: 1.35;
+  color: #333;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee5d6;
+}
+
+.game-over {
+  border: 2px solid #111;
+  background: #fff7d6;
+}
+
+/* Responsive layout: stack panels on narrower screens. */
+@media (max-width: 1180px) {
+  .page {
+    grid-template-columns: 1fr 360px;
+  }
+
+  header {
+    grid-column: 1 / -1;
+  }
+
+  .cards-panel {
+    grid-column: 2;
+  }
+
+  .status-panel {
+    grid-column: 1 / -1;
+  }
+
+  .status-panel .status-bar {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .cards-panel,
+  .status-panel {
+    grid-column: auto;
+  }
+
+  .status-panel .status-bar,
+  .action-grid {
+    grid-template-columns: 1fr;
+  }
+}
